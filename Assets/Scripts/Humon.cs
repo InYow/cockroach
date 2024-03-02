@@ -16,12 +16,12 @@ public class Humon : MonoBehaviour
     public Vector2 stateTimeRange;
     private float _stateTime;
     [Header("与闲逛相关")]
-    public float walkSpeed;//行走速度
+    public float walkForce;
     public Vector2 angleRange;//角度变换
     [Header("与窜逃相关")]
+    public float escapeSpeed;
     private Vector2 _Dic;//移动方向
     public float escapeTime;//窜逃时长
-    public float escapeSpeed;
     private Animator _animator;
     private Rigidbody2D _rb;
     private ZhangLang Player => ZhangLang.Instance;
@@ -82,12 +82,16 @@ public class Humon : MonoBehaviour
         {
             IntoEscape();
         }
+        Score.Instance.AddCombo();
+        Score.Instance.AddScore(10);
     }
     public void Die()
     {
         //TODO 编写死亡逻辑
         _animator.Play("die");
         GetComponent<Rigidbody2D>().simulated = false;
+        Score.Instance.AddCombo();
+        Score.Instance.AddScore(30);
     }
     private void OnCollisionStay2D(Collision2D other)
     {
@@ -105,11 +109,11 @@ public class Humon : MonoBehaviour
         }
         else if (_state == State.idle_walk)
         {
-            _rb.AddForce(_Dic * walkSpeed);
+            _rb.AddForce(_Dic * walkForce);
         }
         else if (_state == State.escape)
         {
-            _rb.AddForce(_Dic * escapeSpeed);
+            _rb.AddForce(_rb.drag * _rb.mass * _rb.velocity.magnitude * _Dic);
         }
     }
     private void IntoEscape()
@@ -117,6 +121,9 @@ public class Humon : MonoBehaviour
         _state = State.escape;
         _stateTime = escapeTime;
         _Dic = ((Vector2)transform.position - (Vector2)Player.transform.position).normalized;
+        Debug.Log(_Dic);
+        _rb.velocity = _Dic * escapeSpeed;
+        Debug.Log(_rb.velocity);
     }
     private void RandomIdle()
     {
