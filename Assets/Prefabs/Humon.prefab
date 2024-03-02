@@ -100,7 +100,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 2.42
+  m_Mass: 2
   m_LinearDrag: 0.7
   m_AngularDrag: 0.3
   m_GravityScale: 0
@@ -160,3 +160,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   invinTime: 1
+  stateTimeRange: {x: 1, y: 2}
+  walkSpeed: 3
+  angleRange: {x: -180, y: 180}
+  escapeTime: 2
+  escapeSpeed: 2

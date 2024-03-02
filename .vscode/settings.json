@@ -51,5 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "cockroach.sln"
+    "dotnet.defaultSolution": "cockroach.sln",
+    "dotnet.preferCSharpExtension": true
 }
