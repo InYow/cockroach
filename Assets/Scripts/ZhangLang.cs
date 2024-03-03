@@ -1,10 +1,27 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ZhangLang : MonoBehaviour
 {
+    [Header("血量")]
+    public float health;
+    [HideInInspector]
+    public float _health;
+    public Image healthBar;
     [Header("伤害")]
     public float damage;
-    [Header("与长按相关")]
+    [Header("与离散长按相关")]
+    public float coldDown;
+    private float _coldDown;
+    public Dot dot_1;
+    public float force_1;
+    public Dot dot_2;
+    public float force_2;
+    public Dot dot_3;
+    public float force_3;
+    public float holdLV_2;
+    public float holdLV_3;
+    [Header("与连续长按相关")]
     public Vector2 rangeTime;
     public float holdTime_Fly;
     public float timeFactor;
@@ -19,6 +36,7 @@ public class ZhangLang : MonoBehaviour
     [Header("调试用")]
     public float _holdTime;
     private Rigidbody2D _rb;
+    private Animator _animator;
     private bool _freezeRotation;
     public static ZhangLang Instance;
     private void Awake()
@@ -30,39 +48,75 @@ public class ZhangLang : MonoBehaviour
     }
     private void Start()
     {
+        Init();
+        _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+    }
+    private void Init()
+    {
+        _health = health;
         _holdTime = 0;
         _freezeRotation = false;
-        _rb = GetComponent<Rigidbody2D>();
+        _coldDown = coldDown;
     }
     private void Update()
     {
+        //传递血量百分比
+        healthBar.fillAmount = _health / health;
         _freezeRotation = false;
-        //移动
-        //  //FIN:按下开始蓄力，计时；松开根据时长给予冲量
-        //  //FIN:按下则认为在蓄力，冲刺则认为在冲刺
-        //  //TODO:分阶段蓄力，分为三阶段，各一秒共三秒
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (_health <= 0f)
         {
-            _holdTime = 0;
-            _freezeRotation = true;
+            Die();
+            return;
         }
-        if (Input.GetKey(KeyCode.Space))
+        //冲刺的冷却
+        if (_coldDown > 0f)
         {
-            _holdTime += Time.deltaTime;
-            _freezeRotation = true;
+            _coldDown -= Time.deltaTime;
         }
-        //  //松开按钮
-        if (Input.GetKeyUp(KeyCode.Space))
+        //冲刺
+        #region 按键
+        if (_coldDown <= 0f && !CheckStop())
         {
-            Move(_holdTime);
-            _holdTime = 0;
+            _animator.Play("idle");
+            //TODO 手柄输入。
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                _holdTime = 0;
+                _freezeRotation = true;
+            }
+            if (Input.GetKey(KeyCode.Space))
+            {
+                _holdTime += Time.deltaTime;
+                dot_1.Fill();
+                if (_holdTime >= holdLV_2)
+                    dot_2.Fill();
+                if (_holdTime >= holdLV_3)
+                    dot_3.Fill();
+                _freezeRotation = true;
+            }
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                Move_Discrete(_holdTime);
+                dot_1.Empty(); dot_2.Empty(); dot_3.Empty();
+                _holdTime = 0;
+            }
         }
+        #endregion
         if (CheckStop())
             _freezeRotation = true;
         //旋转
         if (!_freezeRotation)
             Rotate();
     }
+    public void Die()
+    {
+        _animator.Play("die");
+    }
+    /// <summary>
+    /// 停下返回false
+    /// </summary>
+    /// <returns></returns>
     public bool CheckStop()
     {
         if (_rb.velocity.magnitude <= stopSpeed)
@@ -83,6 +137,21 @@ public class ZhangLang : MonoBehaviour
         else
             Fly(holdtime);
     }
+    public void Move_Discrete(float holdtime)
+    {
+        if (holdtime < holdLV_2)
+        {
+            Dash(force_1);
+            return;
+        }
+        if (holdtime < holdLV_3)
+        {
+            Dash(force_2);
+            return;
+        }
+        Dash(force_3);
+        return;
+    }
     public void Dash(float holdtime)
     {
         //计算方向
@@ -94,6 +163,10 @@ public class ZhangLang : MonoBehaviour
         //计算力
         Vector2 force = dic * dashForce * time;
         _rb.AddForce(force, ForceMode2D.Impulse);
+        //播放动画
+        _animator.Play("dash");
+        //进入冷却
+        _coldDown = coldDown;
     }
     public void Fly(float holdtime)
     {

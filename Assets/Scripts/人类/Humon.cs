@@ -1,17 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 public class Humon : MonoBehaviour
 {
     [Header("与受伤相关")]
+    public ParticleSystem particle;
     public float health;
     public float invinTime;
     private float _invinTime;
-    private float _health;
+    public float _health;
     [Header("状态持续时间")]
     public Vector2 stateTimeRange;
     private float _stateTime;
@@ -73,6 +70,7 @@ public class Humon : MonoBehaviour
         _animator.Play("getHurt");
         _health -= Player.damage;
         Debug.Log($"{gameObject.name}的血量为{_health}");
+        particle.Play();
         _invinTime = invinTime;
         if (_health < 0f)
         {
@@ -84,14 +82,41 @@ public class Humon : MonoBehaviour
         }
         Score.Instance.AddCombo();
         Score.Instance.AddScore(10);
+        //杀虫剂
+        Pesticide pesticide = GetComponent<Pesticide>();
+        if (pesticide != null)
+            pesticide._coldDown = Mathf.Clamp(pesticide._coldDown, pesticide.coldDown * 0.5f, pesticide.coldDown);
+        //拖鞋
+        Thrower thrower = GetComponent<Thrower>();
+        if (thrower != null)
+            thrower._coldDown = Mathf.Clamp(thrower._coldDown, thrower.coldDown * 0.5f, thrower.coldDown);
+        //水枪
+        WaterGun waterGun = GetComponent<WaterGun>();
+        if (waterGun != null)
+            waterGun._coldDown = Mathf.Clamp(waterGun._coldDown, waterGun.coldDown * 0.5f, waterGun.coldDown);
     }
     public void Die()
     {
         //TODO 编写死亡逻辑
         _animator.Play("die");
         GetComponent<Rigidbody2D>().simulated = false;
-        Score.Instance.AddCombo();
         Score.Instance.AddScore(30);
+        //FIXME 消息传递
+        //杀虫剂
+        Pesticide pesticide = GetComponent<Pesticide>();
+        if (pesticide != null)
+            pesticide.enabled = false;
+        //拖鞋
+        Thrower thrower = GetComponent<Thrower>();
+        if (thrower != null)
+        {
+            thrower.enabled = false;
+            thrower.icon.SetActive(false);
+        }
+        //水枪
+        WaterGun waterGun = GetComponent<WaterGun>();
+        if (waterGun != null)
+            waterGun.enabled = false;
     }
     private void OnCollisionStay2D(Collision2D other)
     {
