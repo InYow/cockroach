@@ -48,10 +48,12 @@ public class Score : MonoBehaviour
         comboText.text = combo.ToString();
         _comboTime = comboTime;
         comboImage.gameObject.SetActive(true);
+        Panel.Instance.StartCoroutine(Panel.Instance.ShowPanel(Panel.Instance.panel));
     }
     public void AddCombo()
     {
         SetCombo(1);
+        GetComponent<AudioSource>().Play();
     }
     //计算倍率
     private float Magnification()

@@ -38,5 +38,6 @@ public class WaterGun : MonoBehaviour
         Vector3 vector3 = gun.transform.position + (Vector3)Dic * 1.0f;
         Water a = Instantiate(water, vector3, Quaternion.identity, transform);
         a.Init(Dic, GetComponent<Humon>());
+        GetComponent<AudioSource>().Play();
     }
 }

@@ -1,8 +1,18 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ZhangLang : MonoBehaviour
 {
+    [Header("胜利")]
+    public GameObject shengli;
+    [Header("复活")]
+    public GameObject fuhuo;
+    [Header("音效")]
+    public AudioSource dashAudio;
+    public AudioSource attackAudio;
+    public AudioSource dieAudio;
+    public AudioSource bgmAudio;
     [Header("血量")]
     public float health;
     [HideInInspector]
@@ -112,6 +122,16 @@ public class ZhangLang : MonoBehaviour
     public void Die()
     {
         _animator.Play("die");
+        dieAudio.Play();
+        bgmAudio.Pause();
+        fuhuo.SetActive(true);
+    }
+    public void Rebirth()
+    {
+        _health = health;
+        _animator.Play("idle");
+        bgmAudio.UnPause();
+        fuhuo.SetActive(false);
     }
     /// <summary>
     /// 停下返回false
@@ -167,6 +187,7 @@ public class ZhangLang : MonoBehaviour
         _animator.Play("dash");
         //进入冷却
         _coldDown = coldDown;
+        dashAudio.Play();
     }
     public void Fly(float holdtime)
     {

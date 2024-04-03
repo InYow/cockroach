@@ -97,11 +97,12 @@ public class Humon : MonoBehaviour
     }
     public void Die()
     {
-        //TODO 编写死亡逻辑
+        //FIN 编写死亡逻辑
         _animator.Play("die");
         GetComponent<Rigidbody2D>().simulated = false;
         Score.Instance.AddScore(30);
-        //FIXME 消息传递
+        Spawner.Instance.currentNumber--;
+        //FIN 消息传递
         //杀虫剂
         Pesticide pesticide = GetComponent<Pesticide>();
         if (pesticide != null)
@@ -118,7 +119,7 @@ public class Humon : MonoBehaviour
         if (waterGun != null)
             waterGun.enabled = false;
     }
-    private void OnCollisionStay2D(Collision2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
@@ -127,7 +128,7 @@ public class Humon : MonoBehaviour
     }
     private void RunState()
     {
-        //TODO 原地停留，四处游逛，受伤窜逃，
+        //FIN 原地停留，四处游逛，受伤窜逃，
         if (_state == State.idle_stop)
         {
             return;

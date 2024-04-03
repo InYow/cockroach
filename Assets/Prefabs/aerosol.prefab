@@ -116,5 +116,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dic: {x: 0, y: 0}
   damage: 2
-  speed: 2
+  speed: 3
   fade: 0.3

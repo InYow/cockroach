@@ -4975,7 +4975,7 @@ Rigidbody2D:
   m_LinearDrag: 1
   m_AngularDrag: 0.3
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: bd48218304ae3b34f9e66c9b7ce1cd81, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -5032,6 +5032,7 @@ MonoBehaviour:
   particle: {fileID: 229266800}
   health: 1.5
   invinTime: 1
+  _health: 0
   stateTimeRange: {x: 1, y: 2}
   walkForce: 2
   angleRange: {x: -180, y: 180}

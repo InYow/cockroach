@@ -35,5 +35,6 @@ public class Thrower : MonoBehaviour
         a.Init(Dic, GetComponent<Humon>());
         //        Debug.Log($"{gameObject.name}喷射啦");
         _coldDown = coldDown;
+        GetComponent<AudioSource>().Play();
     }
 }

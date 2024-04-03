@@ -26,5 +26,6 @@ public class Pesticide : MonoBehaviour
         a.dic = Dic;
         Debug.Log($"{gameObject.name}喷射啦");
         _coldDown = coldDown;
+        GetComponent<AudioSource>().Play();
     }
 }
